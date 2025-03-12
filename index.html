@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+</head>
+
+<body>
+    <h1>Products</h1>
+    <ul id="product-list"></ul>
+
+    <h2>Add Product</h2>
+    <form id="product-form">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="description" placeholder="Description" required>
+        <input type="number" id="price" placeholder="Price" required>
+        <button type="submit">Add Product</button>
+    </form>
+
+    <script>
+        async function fetchProducts() {
+            const response = await fetch('http://localhost:8080/products');
+            const products = await response.json();
+
+            const list = document.getElementById('product-list');
+            list.innerHTML = '';
+            products.forEach(product => {
+                const item = document.createElement('li');
+                item.textContent = `${product.name} - ${product.description} - $${product.price}`;
+                list.appendChild(item);
+            });
+        }
+
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+
+            await fetch('http://localhost:8080/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, price: parseFloat(price) })
+            });
+
+            fetchProducts();
+        });
+
+        fetchProducts();
+    </script>
+</body>
+
+</html>
