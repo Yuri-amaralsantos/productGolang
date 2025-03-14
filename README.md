@@ -1,62 +1,88 @@
-# Golang Product API
+# Product API
 
-Este projeto é uma API simples em Golang para gerenciar produtos. A API permite visualizar, criar, editar e deletar produtos, cada um contendo um título e uma descrição.
+Este projeto consiste em uma API REST em Go para gerenciamento de produtos, utilizando o framework Gorilla Mux e o ORM GORM para integração com um banco de dados PostgreSQL. Além disso, há uma interface web básica em HTML e JavaScript para interação com a API.
 
-# Tecnologias utilizadas
-Golang
+## Tecnologias Utilizadas
+- Go
+- Gorilla Mux (roteamento)
+- GORM (ORM para PostgreSQL)
+- PostgreSQL
+- HTML, CSS e JavaScript (frontend básico)
 
-# Gin (Framework para rotas)
-# PostgreSQL (Opcional para persistência de dados)
+## Funcionalidades
+- Criar um produto
+- Listar todos os produtos
+- Atualizar um produto
+- Deletar um produto
 
-# Instalação
+## Como Executar o Projeto
 
-## Clone o repositório:
-git clone https://github.com/seu-usuario/seu-repositorio.git
+### 1. Configurar o Banco de Dados
+Certifique-se de ter um banco de dados PostgreSQL rodando. Utilize o seguinte comando SQL para criar o banco de dados necessário:
 
-## Navegue até o diretório do projeto:
-cd seu-repositorio
+```sql
+CREATE DATABASE productdb;
+```
 
-## Instale as dependências:
+### 2. Configurar as Credenciais do Banco
+Edite a variável `dsn` no código para refletir as credenciais corretas do seu banco de dados:
+
+```go
+dsn := "host=localhost user=postgres password=admin dbname=productdb port=5432 sslmode=disable"
+```
+
+### 3. Instalar Dependências
+Instale as dependências do projeto executando:
+
+```sh
 go mod tidy
+```
 
-## Execute o projeto:
+### 4. Rodar a Aplicação
+Execute o seguinte comando para iniciar o servidor:
+
+```sh
 go run main.go
+```
 
-# Rotas
-## Listar produtos
-GET /products
-Retorna todos os produtos cadastrados.
+O servidor estará disponível em `http://localhost:8080`.
 
-## Criar produto
-POST /products
+## Endpoints da API
 
-Corpo da requisição (JSON):
+### Criar Produto
+**POST** `/products`
+
+```json
 {
-  "title": "Nome do produto",
-  "description": "Descrição do produto"
+  "name": "Produto Exemplo",
+  "description": "Descrição do produto",
+  "price": 99.99
 }
+```
 
-## Editar produto
-PUT /products/:id
+### Listar Produtos
+**GET** `/products`
 
-Corpo da requisição (JSON):
+### Atualizar Produto
+**PUT** `/products/{id}`
+
+```json
 {
-  "title": "Novo título",
-  "description": "Nova descrição"
+  "name": "Produto Atualizado",
+  "description": "Nova descrição",
+  "price": 79.99
 }
+```
 
-## Deletar produto 
-DELETE /products/:id
-Remove um produto pelo ID.
+### Deletar Produto
+**DELETE** `/products/{id}`
 
-## Contribuição
+## Interface Web
+Uma interface básica em HTML e JavaScript está disponível para testar as funcionalidades da API. Basta abrir o arquivo `index.html` no navegador e interagir com os formulários.
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+## Contribuições
+Sinta-se à vontade para contribuir com melhorias para este projeto!
 
 ## Licença
-
-Este projeto é licenciado sob a licença MIT.
-
-## Autor
-Yuri amaral santos - Desenvolvedor 
+Este projeto é distribuído sob a licença MIT.
 
