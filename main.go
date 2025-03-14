@@ -5,7 +5,6 @@ import (
     "fmt"
     "log"
     "net/http"
-
     "github.com/gorilla/mux"
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
@@ -34,8 +33,8 @@ func initDB() {
 // CORS middleware function
 func enableCORS(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
-        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Origin", "*") // Permitir todas as origens
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS") // Adiciona PUT e DELETE
         w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
         if r.Method == "OPTIONS" {
@@ -60,12 +59,37 @@ func getProducts(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(products)
 }
 
+func updateProduct(w http.ResponseWriter, r *http.Request) {
+    id := mux.Vars(r)["id"]
+    var product Product
+    json.NewDecoder(r.Body).Decode(&product)
+
+    if err := db.Model(&product).Where("id = ?", id).Updates(Product{Name: product.Name, Description: product.Description, Price: product.Price}).Error; err != nil {
+        http.Error(w, "Failed to update product", http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(product)
+}
+
+func deleteProduct(w http.ResponseWriter, r *http.Request) {
+    id := mux.Vars(r)["id"]
+    if err := db.Delete(&Product{}, id).Error; err != nil {
+        http.Error(w, "Failed to delete product", http.StatusInternalServerError)
+        return
+    }
+
+    w.WriteHeader(http.StatusOK)
+}
+
 func main() {
     initDB()
 
     r := mux.NewRouter()
     r.HandleFunc("/products", createProduct).Methods("POST")
     r.HandleFunc("/products", getProducts).Methods("GET")
+    r.HandleFunc("/products/{id}", updateProduct).Methods("PUT")
+    r.HandleFunc("/products/{id}", deleteProduct).Methods("DELETE")
 
     // Wrap the router with the CORS middleware
     handler := enableCORS(r)

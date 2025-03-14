@@ -19,6 +19,21 @@
         <button type="submit">Add Product</button>
     </form>
 
+    <h2>Update Product</h2>
+    <form id="update-form">
+        <input type="number" id="update-id" placeholder="Product ID" required>
+        <input type="text" id="update-name" placeholder="Name" required>
+        <input type="text" id="update-description" placeholder="Description" required>
+        <input type="number" id="update-price" placeholder="Price" required>
+        <button type="submit">Update Product</button>
+    </form>
+
+    <h2>Delete Product</h2>
+    <form id="delete-form">
+        <input type="number" id="delete-id" placeholder="Product ID" required>
+        <button type="submit">Delete Product</button>
+    </form>
+
     <script>
         async function fetchProducts() {
             const response = await fetch('http://localhost:8080/products');
@@ -44,6 +59,35 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description, price: parseFloat(price) })
+            });
+
+            fetchProducts();
+        });
+
+        document.getElementById('update-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('update-id').value;
+            const name = document.getElementById('update-name').value;
+            const description = document.getElementById('update-description').value;
+            const price = document.getElementById('update-price').value;
+
+            await fetch(`http://localhost:8080/products/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, price: parseFloat(price) })
+            });
+
+            fetchProducts();
+        });
+
+        document.getElementById('delete-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('delete-id').value;
+
+            await fetch(`http://localhost:8080/products/${id}`, {
+                method: 'DELETE'
             });
 
             fetchProducts();
